@@ -2,7 +2,7 @@
  * @author David Maitho
  * @email thigedavidmaitho@gmail.com
  * @create date 2020-08-11 00:25:07
- * @modify date 2020-08-13 19:00:23
+ * @modify date 2020-08-13 22:12:19
  * @desc [description]
  */
 
@@ -15,7 +15,8 @@
  //Databases
  const { 
      insertNewUser,
-     filterUserByName
+     filterUserByName,
+     updateUser
  } = require('../databases/realmSchemas')
  
  app.get('/', (request, response) => {
@@ -49,7 +50,7 @@
  app.post('/insert-new-user', (request, response) => {
      const { tokenkey } = request.headers
      const { name, email } = request.body
-     response.setHeader('Content-Type', 'appliication/json')
+     response.setHeader('Content-Type', 'application/json')
      if(tokenkey != 'sometokenkey'){
          response.send({
              status: "failed",
@@ -67,6 +68,33 @@
          response.send({
              status: "failed",
              message: `Insert User error: ${error}`
+         })
+     })
+ })
+
+ //PUT request to update user
+ app.put('/update-user', (request, response) => {
+     const { tokenkey } = request.headers
+     const { userId, name, email } = request.body
+     response.setHeader('Content-Type', 'application/json')
+     if(tokenkey != 'sometokenkey'){
+         response.send({
+             status: "failed",
+             message: "Wrong token key sent"
+         })
+         return
+     }
+     //convert string to number, if not a number return zero
+     updateUser(Number(userId) == NaN ? 0: Number(userId), { name, email }).then(updateData => {
+         response.send({
+             status: "success",
+             message: "Update user successfully",
+             data: updateData
+         })
+     }).catch((error) => {
+         response.send({
+             status: "failed",
+             message: `Insert User error: '${error}'`
          })
      })
  })

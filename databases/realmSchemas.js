@@ -2,7 +2,7 @@
  * @author David Maitho
  * @email thigedavidmaitho@gmail.com
  * @create date 2020-08-11 19:47:40
- * @modify date 2020-08-13 18:42:54
+ * @modify date 2020-08-13 22:10:05
  * @desc [description]
  */
 
@@ -61,6 +61,22 @@
      })
  })
 
+ //update existing user
+ const updateUser = (userId, updatingUser) => new Promise((resolve, reject) => {
+     Realm.open(databaseOptions).then(realm => {
+         realm.write(() => {
+             let user = realm.objectForPrimaryKey(USER_SCHEMA, userId)
+             if(!user){
+                 reject(`Cannot find user with ID=${userId} to update`)
+                 return
+             }
+             user.name = updatingUser.name
+             user.email = updatingUser.email
+             resolve(user)
+         })
+     }).catch((error) => reject(error))
+ })
+
  //for testing purpose Not good for API, will just log available users in real
  findAllUsers().then((allUsers) => {
      console.log(`allUsers = ${JSON.stringify(allUsers)}`)
@@ -70,5 +86,6 @@
 
  module.exports = {
     insertNewUser,
-    filterUserByName
+    filterUserByName,
+    updateUser
 }
