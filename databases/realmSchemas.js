@@ -2,7 +2,7 @@
  * @author David Maitho
  * @email thigedavidmaitho@gmail.com
  * @create date 2020-08-11 19:47:40
- * @modify date 2020-08-12 00:27:15
+ * @modify date 2020-08-12 00:47:29
  * @desc [description]
  */
 
@@ -46,3 +46,18 @@
  module.exports = {
      insertNewUser,
  }
+
+ const findAllUsers = () => new Promise((resolve, reject) => {
+    Realm.open(databaseOptions).then(realm => {
+        let allUsers = realm.objects(USER_SCHEMA)         
+        resolve(allUsers)
+     }).catch((error) => {
+         reject(error)
+     })
+ })
+ //for testing purpose Not good for API
+ findAllUsers().then((allUsers) => {
+     console.log(`allUsers = ${JSON.stringify(allUsers)}`)
+ }).catch((error) => {
+     console.log(`cannot  get all users. Error: ${error}`)
+ })
