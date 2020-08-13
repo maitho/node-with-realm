@@ -2,7 +2,7 @@
  * @author David Maitho
  * @email thigedavidmaitho@gmail.com
  * @create date 2020-08-11 00:25:07
- * @modify date 2020-08-11 23:33:03
+ * @modify date 2020-08-13 19:00:23
  * @desc [description]
  */
 
@@ -13,7 +13,10 @@
  //parse application/json
  app.use(bodyParser.json())
  //Databases
- const { insertNewUser } = require('../databases/realmSchemas')
+ const { 
+     insertNewUser,
+     filterUserByName
+ } = require('../databases/realmSchemas')
  
  app.get('/', (request, response) => {
      response.setHeader('Content-Type', 'application/json')
@@ -21,6 +24,24 @@
         status: "success",
         name: "David Maitho",
         message: "Root of nodeRealm"
+     })
+ })
+
+ //filter users by name
+ app.get('/filter-users-by-name', (request, response) => {
+     const { searchedName } = request.query
+     filterUserByName(searchedName).then(filteredUsers => {
+         response.send({
+             status: "success",
+             message: `Filtered users wuth name: '${searchedName}' successfully`,
+             data: filteredUsers,
+             numberOfObjects: filteredUsers.length
+         })
+     }).catch((error) => {
+         response.send({
+             status: "failed",
+             message: `Filtered users with name: '${searchedName}' error: '${error}'`
+         })
      })
  })
 

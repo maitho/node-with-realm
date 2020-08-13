@@ -2,7 +2,7 @@
  * @author David Maitho
  * @email thigedavidmaitho@gmail.com
  * @create date 2020-08-11 19:47:40
- * @modify date 2020-08-12 00:47:29
+ * @modify date 2020-08-13 18:42:54
  * @desc [description]
  */
 
@@ -43,10 +43,6 @@
      }).catch((error) => reject(error))
  })
 
- module.exports = {
-     insertNewUser,
- }
-
  const findAllUsers = () => new Promise((resolve, reject) => {
     Realm.open(databaseOptions).then(realm => {
         let allUsers = realm.objects(USER_SCHEMA)         
@@ -55,9 +51,24 @@
          reject(error)
      })
  })
- //for testing purpose Not good for API
+
+ const filterUserByName = (searchName) => new Promise((resolve, reject) => {
+     Realm.open(databaseOptions).then(realm => {
+         let filteredUsers = realm.objects(USER_SCHEMA).filtered(`name CONTAINS[c] '${searchName}'`)
+         resolve(filteredUsers)
+     }).catch((error) => {
+         reject(error)
+     })
+ })
+
+ //for testing purpose Not good for API, will just log available users in real
  findAllUsers().then((allUsers) => {
      console.log(`allUsers = ${JSON.stringify(allUsers)}`)
  }).catch((error) => {
      console.log(`cannot  get all users. Error: ${error}`)
  })
+
+ module.exports = {
+    insertNewUser,
+    filterUserByName
+}
