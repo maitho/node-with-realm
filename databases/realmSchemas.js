@@ -2,13 +2,25 @@
  * @author David Maitho
  * @email thigedavidmaitho@gmail.com
  * @create date 2020-08-11 19:47:40
- * @modify date 2020-08-13 22:10:05
+ * @modify date 2020-08-14 00:31:08
  * @desc [description]
  */
 
  const Realm = require('realm')
  const USER_SCHEMA = "User"
+ const ADDRESS_SCHEMA = "Address"
  const Promise = require('promise')
+
+ const AddressSchema = {
+     name: ADDRESS_SCHEMA,
+     primaryKey: 'id',
+     properties: {
+         id: 'int', //primary key
+         street: 'string',
+         city: 'string',
+         state: 'string?' //optional property - can be null
+     }
+ }
 
  const UserSchema = {
      name: USER_SCHEMA,
@@ -17,13 +29,14 @@
          id: 'int',
          name: { type: 'string', indexed: true },
          email: 'string',
+         addresses: { type: 'list', objectType: ADDRESS_SCHEMA},
      }
  }
 
  const databaseOptions = {
      path: 'RealmInNodeJS.realm',
-     schema: [UserSchema],
-     schemaVersion: 0, //optional
+     schema: [UserSchema, AddressSchema],
+     schemaVersion: 1, //optional
  }
 
  //functions for userSchema
@@ -77,6 +90,31 @@
      }).catch((error) => reject(error))
  })
 
+ //function for AddressSchema
+ const insertAddressToUser = (userId, addressObject) => new Promise((resolve, reject) => {
+     Realm.open(databaseOptions).then(realm => {
+         const { street, city, state } = addressObject
+         let userObject = realm.objectForPrimaryKey(USER_SCHEMA, userId);
+         if(!userObject){
+            reject(`Cannot find user with ID=${userId} to update/insert address`)
+            return
+         }
+         let filteredAddress = userObject.addresses.filtered(`street='${street.trim()}' AND city='${city.trim()}'`)
+         if(filteredAddress.length > 0) {
+             reject("Address with the street and city exists!")
+             return
+         }
+         realm.write(() => {
+             let newAddress = {
+                 id: Math.floor(Date.now()),
+                 street, city, state
+             }
+             userObject.addresses.push(newAddress)
+             resolve()
+         })
+     }).catch((error) => reject(error))
+ })
+
  //for testing purpose Not good for API, will just log available users in real
  findAllUsers().then((allUsers) => {
      console.log(`allUsers = ${JSON.stringify(allUsers)}`)
@@ -87,5 +125,6 @@
  module.exports = {
     insertNewUser,
     filterUserByName,
-    updateUser
+    updateUser,
+    insertAddressToUser
 }

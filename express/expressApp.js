@@ -2,7 +2,7 @@
  * @author David Maitho
  * @email thigedavidmaitho@gmail.com
  * @create date 2020-08-11 00:25:07
- * @modify date 2020-08-13 22:12:19
+ * @modify date 2020-08-14 00:06:47
  * @desc [description]
  */
 
@@ -16,7 +16,8 @@
  const { 
      insertNewUser,
      filterUserByName,
-     updateUser
+     updateUser,
+     insertAddressToUser
  } = require('../databases/realmSchemas')
  
  app.get('/', (request, response) => {
@@ -70,6 +71,33 @@
              message: `Insert User error: ${error}`
          })
      })
+ })
+
+ app.post('/insert-address-to-user', (request, response) => {
+     console.log(`token key = ${JSON.stringify(request.headers.tokenkey)}`)
+     const { tokenkey } = request.headers
+     const { userId, street, city, state } = request.body
+     console.log(`request.body = ${JSON.stringify(request.body)}`)
+     response.setHeader('Content-Type', 'application/json')
+     if(tokenkey != 'sometokenkey'){
+         response.send({
+             status: "failed",
+             message: "Wrong token key sent"
+         })
+         return
+     }
+     insertAddressToUser(Number(userId) == NaN ? 0: Number(userId), { street, city, state }).then(insertedAddress => {
+         response.send({
+             status: "success",
+             message: `Insert new Address to user with ID=${userId} successfully`
+         })
+     }).catch((error) => {
+         response.send({
+             state: "failed",
+             message: `Insert Address error: ${error}`
+         })
+     })
+
  })
 
  //PUT request to update user
