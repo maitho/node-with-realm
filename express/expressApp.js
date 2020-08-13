@@ -2,7 +2,7 @@
  * @author David Maitho
  * @email thigedavidmaitho@gmail.com
  * @create date 2020-08-11 00:25:07
- * @modify date 2020-08-14 00:06:47
+ * @modify date 2020-08-14 00:55:23
  * @desc [description]
  */
 
@@ -17,7 +17,8 @@
      insertNewUser,
      filterUserByName,
      updateUser,
-     insertAddressToUser
+     insertAddressToUser,
+     deleteUser
  } = require('../databases/realmSchemas')
  
  app.get('/', (request, response) => {
@@ -125,6 +126,34 @@
              message: `Insert User error: '${error}'`
          })
      })
+ })
+ 
+ // delete user
+ app.delete('/delete-user', (request, response) => {
+     const { tokenkey } = request.headers
+     const { userId } = request.body
+     response.setHeader('Content-Type', 'application/json')
+     if(tokenkey != 'sometokenkey'){
+        response.send({
+            status: "failed",
+            message: "Wrong token key sent"
+        })
+        return
+    }
+    deleteUser(Number(userId) == NaN ? 0: Number(userId)).then(() => {
+        response.send({
+            status: "success",
+            message: `Delete user with userId=${userId} successfully`
+        })
+        return
+    }).catch((error) => {
+        response.send({
+            status: "failed",
+            message: `Delete user error: ${error}`
+        })
+        return
+    })
+
  })
 
  module.exports = {

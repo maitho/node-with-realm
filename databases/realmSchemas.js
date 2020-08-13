@@ -2,7 +2,7 @@
  * @author David Maitho
  * @email thigedavidmaitho@gmail.com
  * @create date 2020-08-11 19:47:40
- * @modify date 2020-08-14 00:31:08
+ * @modify date 2020-08-14 01:15:28
  * @desc [description]
  */
 
@@ -115,7 +115,40 @@
      }).catch((error) => reject(error))
  })
 
+ const deleteUser = (userId) => new Promise((resolve, reject) => {
+    Realm.open(databaseOptions).then(realm => {
+        let userObject = realm.objectForPrimaryKey(USER_SCHEMA, userId)
+        if(!userObject){
+            reject(`Cannot find user with ID=${userId} to delete`)
+        }
+        realm.write(() => {
+            realm.delete(userObject.addresses)
+            realm.delete(userObject)
+            resolve()
+        })
+    })
+}).catch((error) => reject(error))
+
+const deleAllUsers = () => new Promise((resolve, reject) => {
+    Realm.open(databaseOptions).then(realm => {
+        realm.write(() => {
+            let allUsers = realm.objects(USER_SCHEMA)
+            for(var index in  allUsers){
+                realm.delete(allUsers[index].addresses)
+            }
+            realm.delete(allUsers)
+            resolve()
+        })
+    }).catch((error) => reject(error))
+})
+
  //for testing purpose Not good for API, will just log available users in real
+ deleAllUsers().then(() => {
+    console.log(`allUsers has been deleted`)
+ }).catch((error) => {
+    console.log(`cannot  delete all users. Error: ${error}`)
+ })
+
  findAllUsers().then((allUsers) => {
      console.log(`allUsers = ${JSON.stringify(allUsers)}`)
  }).catch((error) => {
@@ -126,5 +159,6 @@
     insertNewUser,
     filterUserByName,
     updateUser,
-    insertAddressToUser
+    insertAddressToUser,
+    deleteUser
 }
