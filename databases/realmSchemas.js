@@ -2,7 +2,7 @@
  * @author David Maitho
  * @email thigedavidmaitho@gmail.com
  * @create date 2020-08-11 19:47:40
- * @modify date 2020-08-14 01:15:28
+ * @modify date 2020-08-14 09:51:00
  * @desc [description]
  */
 
@@ -126,8 +126,8 @@
             realm.delete(userObject)
             resolve()
         })
-    })
-}).catch((error) => reject(error))
+    }).catch((error) => reject(error))
+})
 
 const deleAllUsers = () => new Promise((resolve, reject) => {
     Realm.open(databaseOptions).then(realm => {
@@ -143,11 +143,11 @@ const deleAllUsers = () => new Promise((resolve, reject) => {
 })
 
  //for testing purpose Not good for API, will just log available users in real
- deleAllUsers().then(() => {
-    console.log(`allUsers has been deleted`)
- }).catch((error) => {
-    console.log(`cannot  delete all users. Error: ${error}`)
- })
+//  deleAllUsers().then(() => {
+//     console.log(`allUsers has been deleted`)
+//  }).catch((error) => {
+//     console.log(`cannot  delete all users. Error: ${error}`)
+//  })
 
  findAllUsers().then((allUsers) => {
      console.log(`allUsers = ${JSON.stringify(allUsers)}`)

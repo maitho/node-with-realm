@@ -2,7 +2,7 @@
  * @author David Maitho
  * @email thigedavidmaitho@gmail.com
  * @create date 2020-08-11 00:25:07
- * @modify date 2020-08-14 00:55:23
+ * @modify date 2020-08-14 09:33:37
  * @desc [description]
  */
 
@@ -145,13 +145,11 @@
             status: "success",
             message: `Delete user with userId=${userId} successfully`
         })
-        return
     }).catch((error) => {
         response.send({
             status: "failed",
             message: `Delete user error: ${error}`
         })
-        return
     })
 
  })
