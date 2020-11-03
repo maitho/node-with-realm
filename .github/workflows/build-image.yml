@@ -22,6 +22,7 @@ jobs:
 
       #PUSH TO DOCKERHUB   
       - name: Push to GitHub Packages
+        id: docker_build
         uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -47,6 +48,6 @@ jobs:
       #     #   arg1=value1
       #     #   arg2=value2
       
-      # - name: Image digest
-      #   run: echo ${{ steps.docker_build.outputs.digest }}    
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}    
         
