@@ -7,6 +7,6 @@
  */
 
 const { app } = require('./express/expressApp')
-const port = 3000
+const port = 5052
 app.set('port', process.env.PORT || port)
 app.listen(port, () => console.log(`Server Listening on port ${port}`))
