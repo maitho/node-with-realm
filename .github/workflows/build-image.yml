@@ -11,12 +11,32 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
         
-      - name: Push to GitHub Packages
-        uses: docker/build-push-action@v1
+      # - name: Push to GitHub Packages
+      #   uses: docker/build-push-action@v1
+      #   with:
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.CR_PAT }}
+      #     registry: docker.pkg.github.com
+      #     repository: maitho/node-with-realm/noderealm
+      #     tag_with_ref: true
+
+      #PUSH TO DOCKERHUB    
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
         with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
-          registry: docker.pkg.github.com
-          repository: maitho/node-with-realm/noderealm
-          tag_with_ref: true
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+     
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/noderealm:latest
+          # build-args: |
+          #   arg1=value1
+          #   arg2=value2
+      
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}    
         
