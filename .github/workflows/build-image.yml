@@ -28,7 +28,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           registry: docker.io
-          repository: thige25/noderealm:latest
+          repository: thige25/noderealm
           tag_with_ref: true
           
           
